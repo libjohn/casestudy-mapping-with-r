@@ -47,9 +47,11 @@ ucsfi %>%
 
 ## Intersect
 
-- `st_intersects`  (Logical)
-- `st_intersection` (Gives the Object that is intersection)
-- `?st_intersects`
+- `st_intersects`   -- Logical
+- `st_intersection`  -- Gives the Object that is intersection
+- `?st_intersects`  -- getting help
+
+**Note**:  getting help on st_intrsects will reveal a whole host of useful functions:  disjoint, touches, crosses, within, etc.
 
 
 ```{r}
