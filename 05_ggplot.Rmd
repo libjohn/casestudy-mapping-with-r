@@ -1,0 +1,192 @@
+---
+title: "Solutions"
+author: "John Little"
+date: "`R Sys.Date()`"
+output: html_notebook
+---
+
+## Packages
+
+```{r}
+library(tidyverse)
+library(sf)
+```
+
+## Data
+
+```{r}
+ucsfi <- read_sf("data/ucsfi.shp")  # %>% `st_crs<-`(3857)  # 3857 is Web mercator
+brazil0 <- read_sf("data/BRA_adm/BRA_adm0.shp")
+```
+
+
+## Projection
+
+In the above code chunk projection is commented out because tmap appears to work beset **without** the projection assigned.  We'll do that later. assigned with `st_crs()` using a somewhat non-standard syntax. However, It seemed to be the only way I could add a projection to this particular shapefile.  Below are some other syntax examples that have worked for me with other shapefiles.  Of course there are various ways to add projection and since this is R, there's more than one way to accomplish the goal.
+
+```{}
+sf::st_crs(3857)
+sf::st_transform(3857)
+ggplot2::coord_sf(crs = 3857)   # must use the development version of ggplot2
+
+```
+
+### Notes on Projection
+
+From [Brazillian CRS](https://wiki.osgeo.org/wiki/Brazilian_Coordinate_Reference_Systems)
+
+- 4989 
+- 4674
+- 5527
+- 4618
+
+
+### Check Projection
+
+```{r}
+st_crs(ucsfi)
+print("ucsfi above ^^^  --------- brazil0 below")
+st_crs(brazil0)
+
+# or check the projection for an individual polygon ...
+# ucsfi$geometry %>% head(1) 
+```
+
+## Data Preview
+
+```{r}
+as_tibble(ucsfi)
+```
+
+### Wrangle Data
+
+I want to use a numeric data type as my "fill"
+
+```{r}
+ucsfi <- ucsfi %>% 
+  mutate(GID7 = as.numeric(GID7))
+```
+
+
+## ggplot
+
+```{r}
+ucsfi %>% 
+  mutate(ANO_CRIA6 = as.numeric(ANO_CRIA6)) %>% 
+  ggplot() +
+  geom_sf(aes(fill = ANO_CRIA6, color = ANO_CRIA6)) 
+```
+
+## Note different lat/long representations
+
+i.e. different CRS
+
+```{r}
+brazil0 %>% 
+  ggplot() +
+  geom_sf(aes()) 
+```
+
+
+```{r}
+ggplot() +
+  geom_sf(aes(), data = brazil0)
+```
+
+```{r}
+ggplot() +
+  geom_sf(aes(), data = ucsfi)
+```
+
+## Harmonize CRS
+
+```{r}
+#`st_crs<-`(ucsfi)
+st_crs(ucsfi)
+st_crs(brazil0)
+```
+
+### Hardcode the crs
+
+with some very funky notation
+
+> \`st_crs\`<-(4326)
+
+```{r}
+ucsfi <- ucsfi %>% 
+  `st_crs<-`(4326)
+```
+
+### Verify CRS Assignment
+
+```{r}
+#`st_crs<-`(ucsfi)
+st_crs(ucsfi)
+st_crs(brazil0)
+```
+
+## TEST with New CRS
+
+Note the same CRS represented by the same lat/lon
+
+
+```{r}
+ggplot() +
+  geom_sf(aes(), data = ucsfi)
+```
+
+
+
+```{r}
+ggplot() +
+  geom_sf(aes(), data = brazil0)
+```
+
+### Layer the Two maps
+
+```{r}
+ggplot() +
+  geom_sf(aes(), data = brazil0) +
+  geom_sf(aes(fill = GID7, colors = GID7), data = ucsfi) 
+```
+
+## Convert back to sp
+
+Because you might prefer mapping ggplot using geom_polygon
+
+
+```{r}
+class(ucsfi)
+class(brazil0)
+```
+
+## Convert from `sf` to `sp`
+
+```{r}
+uc_sp <- as(ucsfi, "Spatial")
+bz_sp <- as(ucsfi, "Spatial")
+```
+
+
+```{r}
+class(uc_sp)
+class(bz_sp)
+```
+
+## Remove Lat/Lon Lines
+
+```{r}
+ggplot() +
+  geom_sf(aes(), data = brazil0) +
+  geom_sf(aes(fill = GID7, colors = GID7), data = ucsfi) +
+  theme(legend.position = "bottom", 
+        panel.background = element_rect(fill = "transparent"), 
+        panel.grid.major = element_line(color = "transparent"), 
+        axis.text.x = element_blank(), 
+        axis.text.y = element_blank(), 
+        axis.ticks = element_blank()) + 
+  ggtitle("Coolio Brazil Map Title") + 
+  ylab("South to North") 
+```
+```
+
