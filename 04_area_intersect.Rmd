@@ -1,0 +1,89 @@
+---
+title: "Intersect & Area"
+author: "John Little"
+date: "`R Sys.Date()`"
+output: html_notebook
+---
+
+## Questions
+
+4. calculate **area** of obtained polygons 
+3. **intersect** with an existing shapefile. 
+
+## Packages
+
+```{r}
+library(tidyverse)
+library(sf)
+```
+
+
+## Load Data
+
+```{r}
+ucsfi <- read_sf("data/ucsfi.shp")  # %>% `st_crs<-`(5527)  
+brazil0 <- read_sf("data/BRA_adm/BRA_adm0.shp")
+```
+
+## Harmonize CRS
+
+```{r}
+ucsfi <- ucsfi %>% `st_crs<-`(4326)
+```
+
+## Area
+
+- **Requires** `library(lwgeom)`
+- Units reported in meters squared
+
+```{r}
+st_area(brazil0)
+
+ucsfi %>% 
+  head() %>% 
+  select(geometry) %>% 
+  st_area()
+```
+
+## Intersect
+
+- `st_intersects`  (Logical)
+- `st_intersection` (Gives the Object that is intersection)
+- `?st_intersects`
+
+
+```{r}
+st_intersects(brazil0, ucsfi$geometry[1])
+st_intersects(ucsfi$geometry[1], brazil0)
+```
+
+```{r}
+what1 <- st_intersection(ucsfi$geometry[1], brazil0)
+what2 <- st_intersection(brazil0, ucsfi$geometry[1])
+
+what1
+what2
+
+```
+
+
+
+```{r}
+class(what1)
+class(what2)
+```
+
+
+```{r}
+ggplot() +
+  geom_sf(aes(), data = what2)
+```
+
+```{r}
+Nucsfi %>% 
+  head(1) %>% 
+  ggplot() +
+  geom_sf(aes())
+
+```
+
