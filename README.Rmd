@@ -19,3 +19,18 @@ output: github_document
 1. [ggplot reference/study](05_ggplot.Rmd)
 
 
+<img src = "outfile/cool_map.png">
+
+```
+ggplot() +
+  geom_sf(aes(), data = brazil0) +
+  geom_sf(aes(fill = GID7, colors = GID7), data = ucsfi) +
+  theme(legend.position = "bottom", 
+        panel.background = element_rect(fill = "transparent"), 
+        panel.grid.major = element_line(color = "transparent"), 
+        axis.text.x = element_blank(), 
+        axis.text.y = element_blank(), 
+        axis.ticks = element_blank()) + 
+  ggtitle("Coolio Brazil Map Title") + 
+  ylab("South to North") 
+```
