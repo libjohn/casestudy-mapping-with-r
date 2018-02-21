@@ -10,6 +10,7 @@ output: html_notebook
 ```{r}
 library(tidyverse)
 library(sf)
+library(here)
 ```
 
 ## Data
@@ -188,5 +189,15 @@ ggplot() +
   ggtitle("Coolio Brazil Map Title") + 
   ylab("South to North") 
 ```
+
+
+## Save It
+
+```{r}
+ggsave(here("outfile","cool_map.png"), 
+       plot = last_plot(),
+       width = 10,
+       height = 10,
+       units = "cm")
 ```
 
