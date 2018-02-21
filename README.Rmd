@@ -1,0 +1,21 @@
+---
+author: "John Little"
+title: "README"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+## Exploring
+
+1. projection
+3. intersection of existing polygons. 
+4. calculate area of polygons
+
+
+## Contents of Answer
+
+1. [Quick solutions to Visualizing](03_solution_A_concise.Rmd)
+1. [Area & Intersect](04_area_intersect.Rmd)
+1. [ggplot reference/study](05_ggplot.Rmd)
+
+
